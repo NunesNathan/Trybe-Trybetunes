@@ -13,15 +13,13 @@ export default class Sidebar extends Component {
   render() {
     return (
       <Switch>
-        <Route>
-          <Link to="/search"><Search /></Link>
-          <Link to="/album/:id"><Album /></Link>
-          <Link to="/favorites"><Favorites /></Link>
-          <Link to="/profile"><Profile /></Link>
-          <Link to="/profile/edit"><ProfileEdit /></Link>
-          <Link to="/" exact><Login /></Link>
-          <Link to="*"><NotFound /></Link>
-        </Route>
+        <Route path="/search" component={ Search } />
+        <Route path="/album/:id" component={ Album } />
+        <Route path="/favorites" component={ Favorites } />
+        <Route path="/profile" exact component={ Profile } />
+        <Route path="/profile/edit" component={ ProfileEdit } />
+        <Route path="/" exact component={ Login } />
+        <Route path="*" component={ NotFound } />
       </Switch>
     );
   }
