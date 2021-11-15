@@ -5,27 +5,35 @@ export default class Search extends Component {
   constructor() {
     super();
     this.state = {
+      searchInput: '',
       disableSearch: true,
     };
+  }
+
+  request = (e) => {
+    console.log(e);
   }
 
   toEnable = (e) => {
     const { value } = e.target;
     const minValue = 2;
-
-    if (value.length >= minValue) {
-      this.setState({
-        disableSearch: false,
-      });
-    } else {
-      this.setState({
-        disableSearch: true,
-      });
-    }
+    this.setState({
+      searchInput: value,
+    }, () => {
+      if (value.length >= minValue) {
+        this.setState({
+          disableSearch: false,
+        });
+      } else {
+        this.setState({
+          disableSearch: true,
+        });
+      }
+    });
   }
 
   render() {
-    const { disableSearch } = this.state;
+    const { disableSearch, searchInput } = this.state;
     return (
       <div data-testid="page-search">
         <h2>Search</h2>
@@ -39,6 +47,7 @@ export default class Search extends Component {
             <button
               data-testid="search-artist-button"
               type="button"
+              onClick={ () => this.request(searchInput) }
               disabled={ disableSearch }
             >
               Pesquisar

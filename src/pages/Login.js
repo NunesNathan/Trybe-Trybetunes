@@ -15,7 +15,7 @@ export default class Login extends Component {
     };
   }
 
-  test = (name) => {
+  validadeLogin = (name) => {
     this.setState({
       toLoading: true,
     }, () => createUser({ name })
@@ -56,7 +56,7 @@ export default class Login extends Component {
               type="button"
               disabled={ isEnabled }
               onClick={
-                () => this.test(name)
+                () => this.validadeLogin(name)
               }
             >
               Entrar
