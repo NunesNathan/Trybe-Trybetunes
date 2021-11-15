@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
+import Redirect from './components/Redirect';
 
 class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
         <div>
-          <Sidebar />
+          <Redirect />
         </div>
       </BrowserRouter>
     );

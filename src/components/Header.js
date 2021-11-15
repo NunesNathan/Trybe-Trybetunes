@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { getUser } from '../services/userAPI';
+import Navbar from './Navbar';
 
 export default class Header extends Component {
   constructor() {
@@ -24,14 +25,19 @@ export default class Header extends Component {
   render() {
     const { name, onLoading } = this.state;
     return (
-      onLoading ? (<h2>Carregando...</h2>)
-        : (
-          <header data-testid="header-component">
-            <span data-testid="header-user-name">
-              { name }
-            </span>
-          </header>
-        )
+      <>
+        <Navbar />
+        {
+          onLoading ? (<h2>Carregando...</h2>)
+            : (
+              <header data-testid="header-component">
+                <span data-testid="header-user-name">
+                  {name}
+                </span>
+              </header>
+            )
+        }
+      </>
     );
   }
 }

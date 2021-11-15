@@ -5,8 +5,8 @@ export default class ProfileEdit extends Component {
   render() {
     return (
       <div data-testid="page-profile-edit">
-        <Header />
         <h2>ProfileEdit</h2>
+        <Header />
       </div>
     );
   }

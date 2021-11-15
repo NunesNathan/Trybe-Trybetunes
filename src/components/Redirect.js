@@ -8,7 +8,7 @@ import Profile from '../pages/Profile';
 import ProfileEdit from '../pages/ProfileEdit';
 import Search from '../pages/Search';
 
-export default class Sidebar extends Component {
+export default class Redirect extends Component {
   render() {
     return (
       <Switch>
