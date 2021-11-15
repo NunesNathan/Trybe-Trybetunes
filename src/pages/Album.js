@@ -22,7 +22,6 @@ export default class Album extends Component {
   fetcher = async () => {
     const { match } = this.props;
     const { id } = match.params;
-    console.log(match, match.params);
     const result = await getMusics(id);
     const name = result[0].artistName;
     const album = result[0].collectionName;
@@ -63,6 +62,7 @@ export default class Album extends Component {
                     wrapperType={ result.wrapperType }
                     previewUrl={ result.previewUrl }
                     trackName={ result.trackName }
+                    trackId={ result.trackId }
                   />
                 ))}
               </ul>
