@@ -24,19 +24,22 @@ export default class MusicCard extends Component {
 
   render() {
     const { toLoading } = this.state;
-    const { previewUrl, trackName, trackId } = this.props;
+    const { previewUrl, trackName, trackId, favorites } = this.props;
     return (
       <li>
         <h4>{trackName}</h4>
         <audio data-testid="audio-component" src={ previewUrl } controls>
           <track kind="captions" />
         </audio>
-        <label htmlFor="fav">
+        <label htmlFor={ trackId }>
           Favorita
           <input
             type="checkbox"
             data-testid={ `checkbox-music-${trackId}` }
             onClick={ () => this.toFav(trackId) }
+            id={ trackId }
+            checked={ !!favorites
+              .find((favorite) => favorite.trackId === trackId) }
           />
         </label>
         {
@@ -52,4 +55,8 @@ MusicCard.propTypes = {
   previewUrl: PropType.string.isRequired,
   trackName: PropType.string.isRequired,
   trackId: PropType.number.isRequired,
+  favorites: PropType.shape({
+    find: PropType.func.isRequired,
+    trackId: PropType.number.isRequired,
+  }).isRequired,
 };

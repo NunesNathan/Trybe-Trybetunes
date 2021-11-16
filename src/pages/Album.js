@@ -3,6 +3,7 @@ import PropType from 'prop-types';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import getMusics from '../services/musicsAPI';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 export default class Album extends Component {
   constructor() {
@@ -12,14 +13,23 @@ export default class Album extends Component {
       response: false,
       name: '',
       album: '',
+      favorites: [],
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.fetcher();
   }
 
   fetcher = async () => {
+    this.setState({
+      toLoading: true,
+    }, async () => {
+      const favorites = await getFavoriteSongs();
+      this.setState({
+        favorites,
+      });
+    });
     const { match } = this.props;
     const { id } = match.params;
     const result = await getMusics(id);
@@ -30,17 +40,20 @@ export default class Album extends Component {
       results: result,
       name,
       album,
+      toLoading: false,
     });
   }
 
   render() {
-    const { name, response, results, album } = this.state;
+    const { name, response, results, album, toLoading, favorites } = this.state;
     return (
       <div>
         <div data-testid="page-album">
           <h2>Album</h2>
           <Header />
         </div>
+        {toLoading
+          && <h3>Carregando...</h3> }
         {response
           && (
             <>
@@ -59,10 +72,8 @@ export default class Album extends Component {
                 {results.slice(1).map((result) => (
                   <MusicCard
                     key={ result.trackId }
-                    wrapperType={ result.wrapperType }
-                    previewUrl={ result.previewUrl }
-                    trackName={ result.trackName }
-                    trackId={ result.trackId }
+                    { ...result }
+                    favorites={ favorites }
                   />
                 ))}
               </ul>
