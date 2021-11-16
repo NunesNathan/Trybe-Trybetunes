@@ -16,7 +16,7 @@ export default class MusicCard extends Component {
       toLoading: true,
     });
     const result = await getMusics(id);
-    await addSong(result);
+    await addSong(result[0]);
     this.setState({
       toLoading: false,
     });
@@ -38,8 +38,7 @@ export default class MusicCard extends Component {
             data-testid={ `checkbox-music-${trackId}` }
             onClick={ () => this.toFav(trackId) }
             id={ trackId }
-            defaultChecked={ favorites
-              .find((favorite) => favorite.trackId === trackId) }
+            defaultChecked={ favorites.find((favorite) => favorite.trackId === trackId) }
           />
         </label>
         {
