@@ -38,7 +38,7 @@ export default class MusicCard extends Component {
             data-testid={ `checkbox-music-${trackId}` }
             onClick={ () => this.toFav(trackId) }
             id={ trackId }
-            checked={ !!favorites
+            defaultChecked={ favorites
               .find((favorite) => favorite.trackId === trackId) }
           />
         </label>
