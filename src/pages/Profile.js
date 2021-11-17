@@ -36,7 +36,12 @@ export default class Profile extends Component {
         <h2>Profile</h2>
         <Header />
         <div>
-          <img data-testid="profile-image" src={ userImage } alt={ `${userName} pic` } />
+          <img
+            width="170px"
+            data-testid="profile-image"
+            src={ userImage }
+            alt={ `${userName} pic` }
+          />
           <h3>Nome</h3>
           <h4>{userName}</h4>
           <h3>Email</h3>
