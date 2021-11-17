@@ -7,7 +7,6 @@ export default class Profile extends Component {
   constructor() {
     super();
     this.state = {
-      onLoading: true,
       userName: 'Carregando...',
       userEmail: '',
       userDescription: '',
@@ -21,7 +20,6 @@ export default class Profile extends Component {
   async fetcher() {
     const result = await getUser();
     this.setState({
-      onLoading: false,
       userName: result.name,
       userEmail: result.email,
       userDescription: result.description,
