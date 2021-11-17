@@ -3,7 +3,7 @@ import PropType from 'prop-types';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import getMusics from '../services/musicsAPI';
-import { getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { addSong, removeSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 export default class Album extends Component {
   constructor() {
@@ -44,6 +44,22 @@ export default class Album extends Component {
     });
   }
 
+  toFav = async (id, e) => {
+    this.setState({
+      toLoading: true,
+    });
+    const result = await getMusics(id);
+    const { checked } = e.target;
+    if (!checked) {
+      await removeSong(result[0]);
+    } else {
+      await addSong(result[0]);
+    }
+    this.setState({
+      toLoading: false,
+    });
+  }
+
   render() {
     const { name, response, results, album, toLoading, favorites } = this.state;
     return (
@@ -74,6 +90,7 @@ export default class Album extends Component {
                     key={ result.trackId }
                     { ...result }
                     favorites={ favorites }
+                    callback={ (id, e) => this.toFav(id, e) }
                   />
                 ))}
               </ul>
