@@ -26,9 +26,8 @@ export default class Header extends Component {
     const { name, onLoading } = this.state;
     return (
       <>
-        <Navbar />
         {
-          onLoading ? (<h2>Carregando...</h2>)
+          onLoading ? (<span>Carregando...</span>)
             : (
               <header data-testid="header-component">
                 <span data-testid="header-user-name">
@@ -37,6 +36,7 @@ export default class Header extends Component {
               </header>
             )
         }
+        <Navbar />
       </>
     );
   }
