@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { createUser } from '../services/userAPI';
 import Search from './Search';
+
+import { createUser } from '../services/userAPI';
 
 export default class Login extends Component {
   constructor() {
@@ -14,15 +15,17 @@ export default class Login extends Component {
       toLoading: false,
       toGo: false,
     };
+
+    this.validadeLogin = this.validadeLogin.bind(this);
   }
 
-  buttonValidate = (value) => {
+  buttonValidate(value) {
     this.setState({
       isEnabled: value.length < this.MINIMUM_USERNAME_LENGTH,
     });
-  };
+  }
 
-  validadeLogin = () => {
+  validadeLogin() {
     const { username: name } = this.state;
     this.setState({
       toLoading: true,

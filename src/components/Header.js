@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { getUser } from '../services/userAPI';
 import Navbar from './Navbar';
+
+import { getUser } from '../services/userAPI';
 
 export default class Header extends Component {
   constructor() {
     super();
+
     this.state = {
       onLoading: true,
+      username: '',
     };
   }
 
@@ -15,28 +18,29 @@ export default class Header extends Component {
   }
 
   async fetcher() {
-    const result = await getUser();
+    const user = await getUser();
     this.setState({
+      username: user.name,
       onLoading: false,
-      name: result.name,
     });
   }
 
   render() {
-    const { name, onLoading } = this.state;
+    const { onLoading, username } = this.state;
     return (
       <>
-        {
-          onLoading ? (<span>Carregando...</span>)
-            : (
-              <header data-testid="header-component">
-                <span data-testid="header-user-name">
-                  {name}
-                </span>
-              </header>
-            )
-        }
         <Navbar />
+        {
+          onLoading ? (
+            <span>Carregando...</span>
+          ) : (
+            <header data-testid="header-component">
+              <span data-testid="header-user-name">
+                {username}
+              </span>
+            </header>
+          )
+        }
       </>
     );
   }
