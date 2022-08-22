@@ -1,46 +1,43 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 export default class Search extends Component {
   constructor() {
     super();
+
+    this.MINIMUM_SEARCH_LENGTH = 2;
     this.state = {
-      searchInput: '',
       disableSearch: true,
-      toLoading: false,
       response: false,
       results: [],
+      searchInput: '',
+      toLoading: false,
     };
+
+    this.request = this.request.bind(this);
+    this.toEnable = this.toEnable.bind(this);
   }
 
-  request = (e) => {
+  async request() {
+    const { searchInput } = this.state;
     this.setState({
       toLoading: true,
-    }, () => searchAlbumsAPI(e)
-      .then((then) => this.setState({
-        response: true,
-        results: then,
-        toLoading: false,
-      })));
+    });
+    const results = await searchAlbumsAPI(searchInput);
+    this.setState({
+      response: true,
+      results,
+      toLoading: false,
+    });
   }
 
-  toEnable = (e) => {
-    const { value } = e.target;
-    const minValue = 2;
+  toEnable({ value }) {
     this.setState({
       searchInput: value,
-    }, () => {
-      if (value.length >= minValue) {
-        this.setState({
-          disableSearch: false,
-        });
-      } else {
-        this.setState({
-          disableSearch: true,
-        });
-      }
+      disableSearch: value.length < this.MINIMUM_SEARCH_LENGTH,
     });
   }
 
@@ -48,50 +45,50 @@ export default class Search extends Component {
     const { disableSearch, searchInput, toLoading, response, results } = this.state;
     return (
       <div data-testid="page-search">
-        <h2>Search</h2>
+        <h1>Search</h1>
         <Header />
-        {toLoading
-          ? <h3>Carregando...</h3>
-          : (
-            <form>
-              <label htmlFor="search">
-                <input
-                  data-testid="search-artist-input"
-                  onChange={ this.toEnable }
-                />
-                <button
-                  data-testid="search-artist-button"
-                  type="button"
-                  onClick={ () => this.request(searchInput) }
-                  disabled={ disableSearch }
-                >
-                  Pesquisar
-                </button>
-              </label>
-            </form>
-          )}
-        {
-          response
+        { toLoading ? (
+          <span>Carregando...</span>
+        ) : (
+          <form>
+            <label htmlFor="search">
+              <input
+                data-testid="search-artist-input"
+                onChange={ (e) => this.toEnable(e.target) }
+              />
+              <button
+                data-testid="search-artist-button"
+                disabled={ disableSearch }
+                onClick={ this.request }
+                type="button"
+              >
+                Pesquisar
+              </button>
+            </label>
+          </form>
+        )}
+        { response
           && (
             <ul>
-              <h3>
+              <h2>
                 {`Resultado de álbuns de: ${searchInput}`}
-              </h3>
-              { results[0] !== undefined ? (results.map((result) => (
-                <li
-                  key={ result.collectionId }
-                >
-                  <Link
-                    to={ `/album/${result.collectionId}` }
-                    data-testid={ `link-to-album-${result.collectionId}` }
+              </h2>
+              { results.length > 0 ? (
+                results.map((result) => (
+                  <li
+                    key={ result.collectionId }
                   >
-                    { result.collectionName }
-                  </Link>
-                </li>)))
-                : <h4>Nenhum álbum foi encontrado</h4>}
+                    <Link
+                      to={ `/album/${result.collectionId}` }
+                      data-testid={ `link-to-album-${result.collectionId}` }
+                    >
+                      { result.collectionName }
+                    </Link>
+                  </li>
+                ))
+              ) : <h2>Nenhum álbum foi encontrado</h2>}
             </ul>
-          )
-        }
+          )}
       </div>
     );
   }
