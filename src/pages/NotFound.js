@@ -13,8 +13,8 @@ export default class NotFound extends Component {
           Voltar ao Login
         </a>
         <a
-          href="/search"
           data-testid="link-to-search"
+          href="/search"
         >
           Ir à Home
         </a>
