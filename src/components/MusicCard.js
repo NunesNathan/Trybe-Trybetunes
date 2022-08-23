@@ -2,16 +2,8 @@ import React, { Component } from 'react';
 import PropType from 'prop-types';
 
 export default class MusicCard extends Component {
-  constructor() {
-    super();
-    this.state = {
-      toLoading: false,
-    };
-  }
-
   render() {
-    const { toLoading } = this.state;
-    const { previewUrl, trackName, trackId, favorites, favTrue, callback,
+    const { previewUrl, trackName, trackId, favTrue, favButton,
     } = this.props;
     return (
       <li>
@@ -24,17 +16,11 @@ export default class MusicCard extends Component {
           <input
             type="checkbox"
             data-testid={ `checkbox-music-${trackId}` }
-            onClick={ (e) => callback(trackId, e) }
+            onClick={ (e) => favButton(trackId, e.target) }
             id={ trackId }
-            defaultChecked={ favorites
-              ? (favorites.find((favorite) => favorite.trackId === trackId))
-              : (favTrue) }
+            defaultChecked={ favTrue }
           />
         </label>
-        {
-          toLoading
-          && <h3>Carregando...</h3>
-        }
       </li>
     );
   }
@@ -44,10 +30,6 @@ MusicCard.propTypes = {
   previewUrl: PropType.string.isRequired,
   trackName: PropType.string.isRequired,
   trackId: PropType.number.isRequired,
-  favorites: PropType.shape({
-    find: PropType.func.isRequired,
-    trackId: PropType.number.isRequired,
-  }).isRequired,
   favTrue: PropType.bool.isRequired,
-  callback: PropType.func.isRequired,
+  favButton: PropType.func.isRequired,
 };

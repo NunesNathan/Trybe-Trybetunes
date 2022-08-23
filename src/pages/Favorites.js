@@ -6,9 +6,10 @@ import { removeSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 export default class Favorites extends Component {
   constructor() {
     super();
+
     this.state = {
-      toLoading: true,
       favorites: [],
+      toLoading: true,
     };
   }
 
@@ -16,31 +17,20 @@ export default class Favorites extends Component {
     this.fetcher();
   }
 
-  componentDidUpdate() {
-    this.fetchy();
-  }
-
-  fetcher = async () => {
-    const favorites = await getFavoriteSongs();
-    this.setState({
-      favorites,
-      toLoading: false,
-    });
-  }
-
-  fetchy = async () => {
-    this.setState({
-      favorites: await getFavoriteSongs(),
-    });
-  }
-
-  toFav = async (fav) => {
-    console.log(fav);
+  async favButton(fav) {
     this.setState({
       toLoading: true,
     });
     await removeSong(fav);
     this.setState({
+      favorites: await getFavoriteSongs(),
+      toLoading: false,
+    });
+  }
+
+  async fetcher() {
+    this.setState({
+      favorites: await getFavoriteSongs(),
       toLoading: false,
     });
   }
@@ -49,11 +39,11 @@ export default class Favorites extends Component {
     const { toLoading, favorites } = this.state;
     return (
       <div data-testid="page-favorites">
-        <h2>Favorites</h2>
+        <h1>Favorites</h1>
         <Header />
         <div>
           {toLoading
-            ? <h3>Carregando...</h3>
+            ? <span>Carregando...</span>
             : (
               <ul>
                 {favorites.map((favorite) => (
@@ -61,7 +51,7 @@ export default class Favorites extends Component {
                     key={ favorite.trackId }
                     { ...favorite }
                     favTrue
-                    callback={ () => this.toFav(favorite) }
+                    favButton={ () => this.favButton(favorite) }
                   />))}
               </ul>
             )}

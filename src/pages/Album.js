@@ -2,18 +2,21 @@ import React, { Component } from 'react';
 import PropType from 'prop-types';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
-import getMusics from '../services/musicsAPI';
+
 import { addSong, removeSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
+import getMusics from '../services/musicsAPI';
 
 export default class Album extends Component {
   constructor() {
     super();
+
     this.state = {
-      results: [],
-      response: false,
-      name: '',
       album: '',
       favorites: [],
+      name: '',
+      response: false,
+      results: [],
+      toLoading: true,
     };
   }
 
@@ -21,80 +24,74 @@ export default class Album extends Component {
     this.fetcher();
   }
 
-  fetcher = async () => {
-    this.setState({
-      toLoading: true,
-    }, async () => {
-      const favorites = await getFavoriteSongs();
-      this.setState({
-        favorites,
-      });
-    });
-    const { match } = this.props;
-    const { id } = match.params;
-    const result = await getMusics(id);
-    const name = result[0].artistName;
-    const album = result[0].collectionName;
-    this.setState({
-      response: true,
-      results: result,
-      name,
-      album,
-      toLoading: false,
-    });
-  }
-
-  toFav = async (id, e) => {
+  async favButton(id, { checked }) {
     this.setState({
       toLoading: true,
     });
-    const result = await getMusics(id);
-    const { checked } = e.target;
-    if (!checked) {
-      await removeSong(result[0]);
+    const [result] = await getMusics(id);
+    if (checked) {
+      await addSong(result);
     } else {
-      await addSong(result[0]);
+      await removeSong(result);
     }
     this.setState({
       toLoading: false,
     });
   }
 
+  async fetcher() {
+    this.setState({
+      favorites: await getFavoriteSongs(),
+    });
+    const { match: { params: { id } } } = this.props;
+    const result = await getMusics(id);
+    const { artistName: name, collectionName: album } = result[0];
+    this.setState({
+      album,
+      name,
+      response: true,
+      results: result.slice(1),
+      toLoading: false,
+    });
+  }
+
+  isFavorite(id) {
+    const { favorites } = this.state;
+    return favorites.some(({ trackId }) => trackId === id);
+  }
+
   render() {
-    const { name, response, results, album, toLoading, favorites } = this.state;
+    const { name, response, results, album, toLoading } = this.state;
     return (
-      <div>
-        <div data-testid="page-album">
-          <h2>Album</h2>
-          <Header />
-        </div>
-        {toLoading
-          && <h3>Carregando...</h3> }
-        {response
+      <div data-testid="page-album">
+        <h1>Album</h1>
+        <Header />
+        { toLoading
+          && <span>Carregando...</span> }
+        { response
           && (
             <>
-              <h3
+              <h2
                 data-testid="artist-name"
               >
                 {name}
-              </h3>
+              </h2>
               <h3
                 data-testid="album-name"
               >
                 {album}
               </h3>
               <ul>
-                {/* https://stackoverflow.com/questions/40679613/how-to-skip-first-in-map-function */}
-                {results.slice(1).map((result) => (
+                { results.map((result) => (
                   <MusicCard
                     key={ result.trackId }
                     { ...result }
-                    favorites={ favorites }
-                    callback={ (id, e) => this.toFav(id, e) }
+                    favTrue={ this.isFavorite(result.trackId) }
+                    favButton={ (id, eventTarget) => this.favButton(id, eventTarget) }
                   />
-                ))}
+                )) }
               </ul>
-            </ >
+            </>
           )}
       </div>
     );
@@ -102,8 +99,7 @@ export default class Album extends Component {
 }
 
 Album.propTypes = {
-  id: PropType.number.isRequired,
   match: PropType.shape({
-    params: PropType.objectOf(PropType.number),
+    params: PropType.objectOf(PropType.string),
   }).isRequired,
 };

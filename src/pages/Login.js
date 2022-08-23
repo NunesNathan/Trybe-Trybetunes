@@ -1,63 +1,65 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { createUser } from '../services/userAPI';
 import Search from './Search';
+
+import { createUser } from '../services/userAPI';
 
 export default class Login extends Component {
   constructor() {
     super();
 
+    this.MINIMUM_USERNAME_LENGTH = 3;
     this.state = {
-      name: '',
+      username: '',
       isEnabled: true,
       toLoading: false,
       toGo: false,
     };
+
+    this.validadeLogin = this.validadeLogin.bind(this);
   }
 
-  validadeLogin = (name) => {
+  buttonValidate(value) {
+    this.setState({
+      isEnabled: value.length < this.MINIMUM_USERNAME_LENGTH,
+    });
+  }
+
+  validadeLogin() {
+    const { username: name } = this.state;
     this.setState({
       toLoading: true,
-    }, () => createUser({ name })
-      .then(() => this.setState({
-        toGo: true,
-      })));
+    }, () => createUser({ name }));
+    this.setState({
+      toGo: true,
+    });
   }
 
-  buttonValidate = (e) => {
-    const min = 3;
-    const { value } = e.target;
-    const length = (value.length >= min);
-    this.setState({
-      name: value,
-    }, () => {
-      this.setState({
-        isEnabled: !length,
-      });
-    });
-  };
-
   render() {
-    const { name, toLoading, isEnabled, toGo } = this.state;
+    const { isEnabled, toLoading, toGo } = this.state;
     return (
       <div data-testid="page-login">
-        <h2>Login</h2>
+        <h1>Login</h1>
         <form>
           <label htmlFor="login">
             <input
-              placeholder="Login"
               data-testid="login-name-input"
-              onChange={ this.buttonValidate }
               id="login"
+              onChange={ (e) => {
+                const { value } = e.target;
+                this.setState({
+                  username: value,
+                });
+                this.buttonValidate(value);
+              } }
+              placeholder="Login"
             />
             <button
               data-testid="login-submit-button"
-              id="login"
-              type="button"
               disabled={ isEnabled }
-              onClick={
-                () => this.validadeLogin(name)
-              }
+              id="login"
+              onClick={ this.validadeLogin }
+              type="button"
             >
               Entrar
             </button>
@@ -65,7 +67,7 @@ export default class Login extends Component {
         </form>
         {
           toLoading
-          && <h3>Carregando...</h3>
+          && <span>Carregando...</span>
         }
         {
           toGo
